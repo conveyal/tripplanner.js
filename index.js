@@ -14,8 +14,16 @@ console.log(`loading transport network from ${tnFile}`)
 let fd = fs.openSync(tnFile, 'r')
 let tn = TransportNetwork.read(fd)
 
-let { heapTotal, heapUsed } = process.memoryUsage()
-console.log(`heap: ${Math.round(heapTotal / (1024 * 1024))}M, used: ${Math.round(heapUsed / (1024 * 1024))}M`)
+function logMemoryUsage () {
+    let { heapTotal, heapUsed } = process.memoryUsage()
+    console.log(`heap: ${Math.round(heapTotal / (1024 * 1024))}M, used: ${Math.round(heapUsed / (1024 * 1024))}M`)
+}
+
+logMemoryUsage()
+
+tn.streetLayer.index()
+
+logMemoryUsage()
 
 http.createServer((req, res) => {
     try {
@@ -66,8 +74,7 @@ http.createServer((req, res) => {
         res.end()
 
         console.log('request complete')
-        let { heapTotal, heapUsed } = process.memoryUsage()
-        console.log(`heap: ${Math.round(heapTotal / (1024 * 1024))}M, used: ${Math.round(heapUsed / (1024 * 1024))}M`)
+        logMemoryUsage()
     } catch (err) {
         res.statusCode = 500
         console.log(err)
