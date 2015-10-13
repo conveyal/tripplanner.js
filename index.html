@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>PTO</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.css" />
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.5/leaflet.js"></script>
+
+    <style type="text/css">
+        html, body, #map { width: 100%; height: 100%; padding: 0px; margin: 0px }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <script type="text/javascript">
+        // zoom to netherlands by default
+        var map = L.map('map').setView([51.9971, 5.1718], 10)
+        L.tileLayer('//{s}.tiles.mapbox.com/v3/conveyal.hml987j0/{z}/{x}/{y}.png', {
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+            maxZoom: 18
+        }).addTo(map)
+
+        // keep track of whether this is the first map click or the second
+        var newSearch = true;
+        var searchLayer = null;
+        var origin = null;
+        var destination = null;
+
+        var originCoord = null;
+
+        map.on('click', function (e) {
+            if (newSearch) {
+                originCoord = e.latlng
+
+                if (origin != null) {
+                    map.removeLayer(searchLayer)
+                    map.removeLayer(origin)
+                    map.removeLayer(destination)
+                }
+
+                origin = L.circle(e.latlng, 10, {
+                    color: 'blue'
+                }).addTo(map);
+            }
+            else {
+                destination = L.circle(e.latlng, 10, {
+                    color: 'red'
+                }).addTo(map);
+                // run the search
+                $.ajax({
+                    url: '/?from=' + originCoord.lat + ',' + originCoord.lng + '&to=' + e.latlng.lat + ',' + e.latlng.lng,
+                    success: function (data) {
+                        searchLayer = new L.geoJson(data).addTo(map)
+                    }
+                })
+            }
+            newSearch = !newSearch
+        })
+
+    </script>
+</body>
+</html>

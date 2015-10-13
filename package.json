@@ -1,0 +1,16 @@
+{
+  "name": "tripplanner-js-test",
+  "version": "0.0.1",
+  "description": "Tests of trip planning in JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+  	"start": "babel-node -max-old-space-size=4096 index.js"
+  },
+  "author": "Matthew Wigginton Conway",
+  "license": "MIT",
+  "dependencies": {
+    "priorityqueuejs": "1.0.0",
+    "rbush": "^1.4.1"
+  }
+}
