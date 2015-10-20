@@ -12,12 +12,16 @@
     </style>
 </head>
 <body>
+    <div style="position: fixed; left: 50px; top:10px; z-index: 200; background-color: #fff">
+        <input type="checkbox" id="isochrone" /><label for="isochrone">Isochrones</label>
+    </div>
+
     <div id="map"></div>
     <script type="text/javascript">
         // zoom to netherlands by default
         var map = L.map('map').setView([51.9971, 5.1718], 10)
         L.tileLayer('//{s}.tiles.mapbox.com/v3/conveyal.hml987j0/{z}/{x}/{y}.png', {
-            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery � <a href="http://mapbox.com">Mapbox</a>',
+            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="http://mapbox.com">Mapbox</a>',
             maxZoom: 18
         }).addTo(map)
 
@@ -30,32 +34,40 @@
         var originCoord = null;
 
         map.on('click', function (e) {
-            if (newSearch) {
-                originCoord = e.latlng
+            if (searchLayer !== null) map.removeLayer(searchLayer)
+            if (origin !== null) map.removeLayer(origin)
+            if (destination !== null) map.removeLayer(destination)
 
-                if (origin != null) {
-                    map.removeLayer(searchLayer)
-                    map.removeLayer(origin)
-                    map.removeLayer(destination)
-                }
-
-                origin = L.circle(e.latlng, 10, {
-                    color: 'blue'
-                }).addTo(map);
-            }
-            else {
-                destination = L.circle(e.latlng, 10, {
-                    color: 'red'
-                }).addTo(map);
-                // run the search
+            if ($('#isochrone').is(':checked')) {
                 $.ajax({
-                    url: '/?from=' + originCoord.lat + ',' + originCoord.lng + '&to=' + e.latlng.lat + ',' + e.latlng.lng,
-                    success: function (data) {
-                        searchLayer = new L.geoJson(data).addTo(map)
+                    url: '/?from=' + e.latlng.lat + ',' + e.latlng.lng,
+                    success: function (isochrones) {
+                        searchLayer = new L.geoJson(isochrones, {style: {stroke: false}}).addTo(map)
                     }
                 })
             }
-            newSearch = !newSearch
+            else {
+                if (newSearch) {
+                    originCoord = e.latlng
+
+                    origin = L.circle(e.latlng, 10, {
+                        color: 'blue'
+                    }).addTo(map);
+                }
+                else {
+                    destination = L.circle(e.latlng, 10, {
+                        color: 'red'
+                    }).addTo(map);
+                    // run the search
+                    $.ajax({
+                        url: '/?from=' + originCoord.lat + ',' + originCoord.lng + '&to=' + e.latlng.lat + ',' + e.latlng.lng,
+                        success: function (data) {
+                            searchLayer = new L.geoJson(data).addTo(map)
+                        }
+                    })
+                }
+                newSearch = !newSearch
+            }
         })
 
     </script>

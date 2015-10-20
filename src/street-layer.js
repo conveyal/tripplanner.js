@@ -1,8 +1,7 @@
 import rbush from 'rbush'
 import Edge from './edge'
-import Vertex from './vertex'
 
-const RTREE_LEAF_SIZE = 9
+const RTREE_LEAF_SIZE = 32
 
 /** Represents the street layer of a TransportNetwork */
 export default class StreetLayer {
@@ -11,7 +10,7 @@ export default class StreetLayer {
 		// TODO: we're using fixed-point lats/lons here, but this adds complexity and may not be any better than using
 		// floating points since they're all the same type anyhow. Of course we may decide to use typed arrays, in which
 		// case it does make sense to use fixed-point coordinates.
-		this.scaleFactor = scaleFactor;
+		this.scaleFactor = scaleFactor
 		this.lats = []
 		this.lons = []
 
@@ -76,7 +75,7 @@ export default class StreetLayer {
 			e.seek(i)
 			let bbox = e.getBbox()
 
-			if (i == 0) console.log(`bbox: ${bbox}`)
+			if (i === 0) console.log(`bbox: ${bbox}`)
 
 			bbox.push(i)
 			treeNodes.push(bbox)

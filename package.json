@@ -5,12 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-  	"start": "babel-node --max_old_space_size=4096 index.js"
+  	"start": "node --max_old_space_size=4096 index-es5.js"
   },
   "author": "Matthew Wigginton Conway",
   "license": "MIT",
   "dependencies": {
     "priorityqueuejs": "1.0.0",
-    "rbush": "^1.4.1"
+    "rbush": "^1.4.1",
+    "dissolve": "^0.3.3",
+    "turf-union": "^1.0.2",
+    "turf-tin": "^1.0.6",
+    "turf-point": "^2.0.1",
+    "babel": "^5.8.23"
   }
 }
